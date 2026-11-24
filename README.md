@@ -1,5 +1,6 @@
 # EquityIQ — Equity Market Data Management & Quality Analysis
 
+[![CI](https://github.com/Y0sola/equity-iq/actions/workflows/ci.yml/badge.svg)](https://github.com/Y0sola/equity-iq/actions/workflows/ci.yml)
 ![Status](https://img.shields.io/badge/status-active%20development-blue)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791)
 ![SQL](https://img.shields.io/badge/core-SQL-0f1e36)
@@ -11,7 +12,7 @@ An independent financial data management project that acquires real historical e
 
 **SQL is the core of the project**: validation rules, promotion to production tables, quality metrics and every financial calculation are implemented in PostgreSQL. Python is used only for data acquisition, orchestration and the API layer.
 
-> **Status: active development.** The data pipeline, quality framework, analytics, API and dashboard are implemented, tested and reproduced from a clean clone of this repository (see [Project status](#project-status)). Continuous integration, automated frontend tests and a hosted demo are planned.
+> **Status: active development.** The data pipeline, quality framework, analytics, API and dashboard are implemented, tested (continuously, on every push) and reproduced from a clean clone of this repository (see [Project status](#project-status)). Automated frontend tests and a hosted demo are planned.
 > Historical snapshot only — not live data, not investment advice. Independent portfolio project, not affiliated with any data vendor or financial institution.
 
 ---
@@ -66,7 +67,8 @@ EquityIQ implements that workflow end to end for a defined universe of US equiti
 | Read-only API (FastAPI, 25 GET endpoints, allowlisted SQL library) | ✅ Complete | API tests including security cases |
 | Dashboard (Overview, Data Quality, SQL Library, Securities, Corporate Actions, Ingestion & Lineage) | ✅ Complete | Verified manually in the browser |
 | Final documentation, screenshots, case study, clean-clone reproduction | ✅ Complete | Reproduction found and fixed two issues (see below) |
-| Automated frontend tests, continuous integration, hosted demo | 📋 Planned | See [Roadmap](#roadmap) |
+| Continuous integration (GitHub Actions: SQL, API and dashboard build on every push) | ✅ Complete | See [Testing](#testing-and-verification) |
+| Automated frontend tests, hosted demo | 📋 Planned | See [Roadmap](#roadmap) |
 
 ## Verified results
 
@@ -281,6 +283,8 @@ Accessibility choices: status shown with colour **and** icon **and** text, a col
 
 Synthetic tests run in a **separate database** (`equityiq_test`) built from the same DDL; the fixture loader refuses to run against any database whose name does not contain `test`.
 
+**Continuous integration** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): every push and pull request to `main` builds the whole schema in a disposable PostgreSQL 17 container and runs the schema, data quality, analytics and API suites (including every SQL Library query), plus a clean install, typecheck and production build of the dashboard. The synthetic test results are attached to each run as an artifact. Suites that need the real Yahoo Finance snapshot (ingestion reconciliation, pandas cross-check) run locally, because raw provider data is not redistributed in this repository.
+
 ---
 
 ## Project structure
@@ -298,7 +302,8 @@ equity-iq/
 │   ├── tests/                # pytest API tests
 │   └── main.py, database.py, query_library.py
 ├── frontend/                 # React + TypeScript dashboard (Vite)
-├── scripts/                  # db_init, test runners, analytics cross-check
+├── scripts/                  # db_init, test runners, analytics cross-check, screenshots
+├── .github/workflows/ci.yml  # continuous integration (PostgreSQL 17 service, SQL/API tests, dashboard build)
 ├── docs/                     # architecture, data dictionary, ER diagram, methodology, API, dashboard, case study
 │   └── screenshots/          # dashboard screenshots (scripts/capture_screenshots.sh)
 ├── data/                     # raw/ (git-ignored), quality-tests/ (synthetic test results)
@@ -352,7 +357,7 @@ The snapshot window is fixed in `backend/ingestion/config.py`. Data downloaded o
 - [x] Phase 5: Read-only API with a least-privilege role and an allowlisted SQL library
 - [x] Phase 6: Dashboard (Overview, Data Quality, SQL Library, Securities, Corporate Actions, Ingestion & Lineage)
 - [x] Phase 7: Final documentation, screenshots, project case study, clean-clone reproduction, end-to-end verification
-- [ ] Continuous integration (SQL and API test suites on every push)
+- [x] Continuous integration (SQL and API test suites and dashboard build on every push)
 - [ ] Automated frontend tests
 - [ ] Hosted demo
 - [ ] Possible extensions: second data source for cross-validation, versioned adjusted-price history, issue workflow actions in the UI, dark mode

@@ -1,0 +1,147 @@
+# EquityIQ continuous integration
+#
+# Runs on every push and pull request to main:
+#   1. database-and-api: builds the full schema in a disposable PostgreSQL 17 container
+#      and runs every suite that uses SYNTHETIC data only (schema constraints, data
+#      quality framework, financial analytics edge cases, read-only API incl. all
+#      SQL Library queries).
+#   2. frontend: clean install from the lockfile, TypeScript typecheck and production build.
+#
+# Not run here: suites that need the real Yahoo Finance snapshot (ingestion
+# reconciliation, pandas cross-check). Raw provider data is deliberately not
+# redistributed in this repository, so those run locally after fetching the data.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  database-and-api:
+    name: SQL & API tests (PostgreSQL 17)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          # Throwaway password for a disposable CI container that only lives for this
+          # job and is not reachable from outside the runner. Not a real credential.
+          POSTGRES_PASSWORD: ci-ephemeral-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+
+    env:
+      # Same variables the project reads from .env; values are CI-only.
+      EQUITYIQ_DB_HOST: localhost
+      EQUITYIQ_DB_PORT: "5432"
+      EQUITYIQ_DB_NAME: equityiq
+      EQUITYIQ_TEST_DB_NAME: equityiq_test
+      EQUITYIQ_DB_USER: equityiq_owner
+      EQUITYIQ_DB_PASSWORD: ci-ephemeral-only     # db_init.sh also uses this for the admin login
+      EQUITYIQ_READER_USER: equityiq_reader
+      EQUITYIQ_READER_PASSWORD: ci-ephemeral-reader
+      PG_ADMIN_USER: postgres
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: PostgreSQL client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+          psql --version
+
+      - name: Write .env from CI variables
+        # The scripts read .env (as on a developer machine); generate it from the job env.
+        run: |
+          {
+            for v in EQUITYIQ_DB_HOST EQUITYIQ_DB_PORT EQUITYIQ_DB_NAME EQUITYIQ_TEST_DB_NAME \
+                     EQUITYIQ_DB_USER EQUITYIQ_DB_PASSWORD EQUITYIQ_READER_USER \
+                     EQUITYIQ_READER_PASSWORD PG_ADMIN_USER; do
+              echo "$v=${!v}"
+            done
+          } > .env
+
+      - name: Install Python dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --quiet --upgrade pip
+          .venv/bin/pip install --quiet -r requirements.txt
+
+      - name: Initialise databases (roles, schemas, rules, views, grants)
+        run: |
+          scripts/db_init.sh
+          scripts/db_init.sh --test
+
+      - name: Schema constraint tests
+        run: scripts/run_schema_tests.sh
+
+      - name: Data quality framework tests (synthetic fixtures)
+        run: scripts/run_quality_tests.sh
+
+      - name: Financial analytics edge-case tests (synthetic fixtures)
+        run: scripts/run_analytics_tests.sh
+
+      - name: Read-only API tests
+        run: scripts/run_api_tests.sh
+
+      - name: Upload synthetic test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: synthetic-quality-test-results
+          path: data/quality-tests/latest_results.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  frontend:
+    name: Dashboard typecheck & build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies (lockfile)
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck and production build
+        run: npm run build

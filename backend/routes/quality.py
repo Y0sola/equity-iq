@@ -23,8 +23,12 @@ def summary() -> dict:
         "field_completeness": fetch_all("SELECT * FROM analytics.v_dq_field_completeness ORDER BY field_name"),
         "issues_by_class_severity_status": fetch_all(
             "SELECT * FROM analytics.v_dq_issue_summary ORDER BY issue_class, severity, status"),
+        # Loaded batches only: SKIPPED reruns carry no records (they stay visible in the
+        # ingestion history as audit entries).
         "batches": fetch_all(
-            "SELECT * FROM analytics.v_dq_batch_metrics ORDER BY ingestion_batch_id DESC", max_rows=50),
+            """SELECT * FROM analytics.v_dq_batch_metrics
+                WHERE status IN ('SUCCEEDED', 'PARTIAL')
+                ORDER BY ingestion_batch_id DESC""", max_rows=50),
         "notes": {
             "scores": "numerator / denominator for the latest validated price batch; anomalies excluded",
             "records_vs_issues": "record counts and issue counts are reported separately",

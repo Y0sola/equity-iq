@@ -74,4 +74,5 @@ All 25 endpoints returned 200. Medians: 0.8–54 ms for most endpoints; `/api/se
 - **Stale planner statistics:** directly after a bulk load, the dimension-scores view took 3,330 ms because PostgreSQL had no statistics yet; after `ANALYZE` it took 2.5 ms. The pipeline now runs `audit.analyze_project_tables()` after promotion.
 - **Slow numeric parsing:** field completeness took 520 ms on real data. Two fixes: a strict regex replaces `pg_input_is_valid()` (7× faster) and the unpivot view converts each value once. The stricter parser also **rejects** formats PostgreSQL itself accepts (`1_000`, hexadecimal `0x1A` = 26) that should never appear in a price file; new fixture F25 covers this.
 - FastAPI 0.165 stores included routers lazily, so `len(app.routes)` under-counts; the OpenAPI spec lists all 25 paths.
+- Found in Phase 7 reproduction: the health test hard-coded the role name `equityiq_reader`; it now compares with the names configured in `.env`, so the suite passes for any naming.
 - Known warning: Starlette recommends `httpx2` for its TestClient (deprecation warning only, tests unaffected).

@@ -59,4 +59,20 @@ Issues found and fixed during verification:
 - An existing process already listened on port 8000; the dev proxy port is configurable (`EQUITYIQ_API_PORT`) instead of stopping it.
 - Single 805 KB bundle warning → route-level code-splitting.
 
-Not done: automated frontend unit/E2E tests (verification was manual in the browser plus TypeScript and the API test suite); screenshots for the README (Phase 7).
+Not done: automated frontend unit/E2E tests (verification was manual in the browser plus TypeScript and the API test suite).
+
+## Screenshots (Phase 7)
+
+`scripts/capture_screenshots.sh [base_url]` captures the README screenshots with headless Chrome (throwaway profile, 1440 px wide) from a running instance. Reviewing the first set found three presentation issues, all fixed before the final capture:
+- date axes repeated month labels (ticks were evenly spaced, not monthly) → one tick per month;
+- the Data Quality "batch outcomes" table listed `SKIPPED` rerun batches with 0 records → only loaded batches are shown there (reruns remain visible in Ingestion & Lineage as audit history);
+- the six-step data-flow diagram wrapped onto two lines at desktop width → narrower step boxes.
+
+| Page | File |
+|---|---|
+| Overview | `docs/screenshots/overview.png` |
+| Data Quality (scores) | `docs/screenshots/data-quality.png` |
+| Issue detail | `docs/screenshots/issue-detail.png` |
+| SQL Library | `docs/screenshots/sql-library.png` |
+| Security detail (NVDA) | `docs/screenshots/security-detail.png` |
+| Ingestion & Lineage | `docs/screenshots/ingestion-lineage.png` |

@@ -1,0 +1,1280 @@
+{
+    "tests": [
+        {
+            "no": 1,
+            "test": "A30 Valid dividend",
+            "actual": "PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED {}"
+        },
+        {
+            "no": 2,
+            "test": "A31 Valid 4-for-1 split",
+            "actual": "PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED {}"
+        },
+        {
+            "no": 3,
+            "test": "A32 Negative dividend",
+            "actual": "QUARANTINED {DQ-VAL-010}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-010}"
+        },
+        {
+            "no": 4,
+            "test": "A33 Zero split ratio",
+            "actual": "QUARANTINED {DQ-VAL-011}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-011}"
+        },
+        {
+            "no": 5,
+            "test": "A34 Exact duplicate dividend",
+            "actual": "ONE_PROMOTED_REST_REDUNDANT {DQ-UNI-003}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "ONE_PROMOTED_REST_REDUNDANT {DQ-UNI-003}"
+        },
+        {
+            "no": 6,
+            "test": "A35 Conflicting dividend amounts",
+            "actual": "QUARANTINED {DQ-UNI-004}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-UNI-004}"
+        },
+        {
+            "no": 7,
+            "test": "A36 Ex-date on a Saturday",
+            "actual": "QUARANTINED {DQ-VAL-007}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-007}"
+        },
+        {
+            "no": 8,
+            "test": "A37 Unsupported action type",
+            "actual": "QUARANTINED {DQ-VAL-009}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-009}"
+        },
+        {
+            "no": 9,
+            "test": "A38 Company reference failed validation",
+            "actual": "QUARANTINED {DQ-COM-007}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-COM-007}"
+        },
+        {
+            "no": 10,
+            "test": "C01 Valid control record",
+            "actual": "PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED {}"
+        },
+        {
+            "no": 11,
+            "test": "C02 Valid control record",
+            "actual": "PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED {}"
+        },
+        {
+            "no": 12,
+            "test": "C03 Valid control record the day before a large move",
+            "actual": "PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED {}"
+        },
+        {
+            "no": 13,
+            "test": "C04 Day after a level shift: normal move, not flagged",
+            "actual": "PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED {}"
+        },
+        {
+            "no": 14,
+            "test": "C05 Day after a quarantined record: gap return not evaluated, nothing flagged",
+            "actual": "PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED {}"
+        },
+        {
+            "no": 15,
+            "test": "F01 Exact duplicate: first copy promoted, second not",
+            "actual": "ONE_PROMOTED_REST_REDUNDANT {DQ-UNI-001}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "ONE_PROMOTED_REST_REDUNDANT {DQ-UNI-001}"
+        },
+        {
+            "no": 16,
+            "test": "F02 Conflicting duplicate: both copies quarantined",
+            "actual": "QUARANTINED {DQ-UNI-002}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-UNI-002}"
+        },
+        {
+            "no": 17,
+            "test": "F03 Null close",
+            "actual": "QUARANTINED {DQ-COM-001}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-COM-001}"
+        },
+        {
+            "no": 18,
+            "test": "F04 Negative volume",
+            "actual": "QUARANTINED {DQ-VAL-003}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-003}"
+        },
+        {
+            "no": 19,
+            "test": "F05 Invalid ticker (typo)",
+            "actual": "QUARANTINED {DQ-VAL-004}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-004}"
+        },
+        {
+            "no": 20,
+            "test": "F06 High below low: one row, three consistency failures",
+            "actual": "QUARANTINED {DQ-CNS-001,DQ-CNS-002,DQ-CNS-003}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-CNS-001,DQ-CNS-002,DQ-CNS-003}"
+        },
+        {
+            "no": 21,
+            "test": "F07 Missing trading session: issue without raw record",
+            "actual": "ISSUE_ONLY {DQ-COM-004}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "ISSUE_ONLY {DQ-COM-004}"
+        },
+        {
+            "no": 22,
+            "test": "F08 Legitimate +15% move: flagged for review, NOT discarded",
+            "actual": "PROMOTED_FLAGGED {DQ-ANO-001,DQ-ANO-003}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED_FLAGGED {DQ-ANO-001,DQ-ANO-003}"
+        },
+        {
+            "no": 23,
+            "test": "F09 Multiple failures: zero open (invalid AND outside day range) and missing volume",
+            "actual": "QUARANTINED {DQ-CNS-002,DQ-COM-002,DQ-VAL-002}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-CNS-002,DQ-COM-002,DQ-VAL-002}"
+        },
+        {
+            "no": 24,
+            "test": "F10 Record dated on an exchange holiday",
+            "actual": "QUARANTINED {DQ-VAL-007}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-007}"
+        },
+        {
+            "no": 25,
+            "test": "F10b Holiday: no missing-session issue for a closed market",
+            "actual": "NOT_PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "NOT_PROMOTED {}"
+        },
+        {
+            "no": 26,
+            "test": "F11 Unparseable open price \"abc\"",
+            "actual": "QUARANTINED {DQ-VAL-001}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-001}"
+        },
+        {
+            "no": 27,
+            "test": "F12 Future date outside the snapshot window",
+            "actual": "QUARANTINED {DQ-VAL-006}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-006}"
+        },
+        {
+            "no": 28,
+            "test": "F13 Price currency differs from company currency",
+            "actual": "QUARANTINED {DQ-CNS-004}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-CNS-004}"
+        },
+        {
+            "no": 29,
+            "test": "F14 Volume spike 6x: flagged, promoted",
+            "actual": "PROMOTED_FLAGGED {DQ-ANO-002}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED_FLAGGED {DQ-ANO-002}"
+        },
+        {
+            "no": 30,
+            "test": "F15 Adjusted series steps +2% with no corporate action",
+            "actual": "PROMOTED_FLAGGED {DQ-ANO-003,DQ-CNS-007}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED_FLAGGED {DQ-ANO-003,DQ-CNS-007}"
+        },
+        {
+            "no": 31,
+            "test": "F16 Price for a company whose reference data was quarantined",
+            "actual": "QUARANTINED {DQ-COM-007}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-COM-007}"
+        },
+        {
+            "no": 32,
+            "test": "F17 Impossible date",
+            "actual": "QUARANTINED {DQ-VAL-005}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-005}"
+        },
+        {
+            "no": 33,
+            "test": "F18 Saturday: no missing-session issue",
+            "actual": "NOT_PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "NOT_PROMOTED {}"
+        },
+        {
+            "no": 34,
+            "test": "F19 Fractional volume",
+            "actual": "QUARANTINED {DQ-VAL-008}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-008}"
+        },
+        {
+            "no": 35,
+            "test": "F21 +20% across a 3-session gap: NOT evaluated as a one-day return",
+            "actual": "PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED {}"
+        },
+        {
+            "no": 36,
+            "test": "F23 Last session of the window missing: completeness + timeliness",
+            "actual": "ISSUE_ONLY {DQ-COM-004,DQ-TIM-002}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "ISSUE_ONLY {DQ-COM-004,DQ-TIM-002}"
+        },
+        {
+            "no": 37,
+            "test": "F24 Blank ticker",
+            "actual": "QUARANTINED {DQ-COM-003}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-COM-003}"
+        },
+        {
+            "no": 38,
+            "test": "F25 Volume \"1_000_000\": underscore digit grouping rejected",
+            "actual": "QUARANTINED {DQ-VAL-001}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-001}"
+        },
+        {
+            "no": 39,
+            "test": "R01 Valid reference record",
+            "actual": "PROMOTED {}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED {}"
+        },
+        {
+            "no": 40,
+            "test": "R02 Exact duplicate reference row",
+            "actual": "ONE_PROMOTED_REST_REDUNDANT {DQ-UNI-005}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "ONE_PROMOTED_REST_REDUNDANT {DQ-UNI-005}"
+        },
+        {
+            "no": 41,
+            "test": "R03 Provider sector Energy vs assigned Healthcare: informational",
+            "actual": "PROMOTED_FLAGGED {DQ-CNS-005}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "PROMOTED_FLAGGED {DQ-CNS-005}"
+        },
+        {
+            "no": 42,
+            "test": "R04 Invalid currency code US$",
+            "actual": "QUARANTINED {DQ-VAL-012}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-012}"
+        },
+        {
+            "no": 43,
+            "test": "R05 Ticker not in universe",
+            "actual": "QUARANTINED {DQ-VAL-004}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-VAL-004}"
+        },
+        {
+            "no": 44,
+            "test": "R06 Blank company name (critical) and missing industry (warning)",
+            "actual": "QUARANTINED {DQ-COM-005,DQ-COM-006}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-COM-005,DQ-COM-006}"
+        },
+        {
+            "no": 45,
+            "test": "R07 Conflicting duplicate reference rows",
+            "actual": "QUARANTINED {DQ-UNI-006}",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "QUARANTINED {DQ-UNI-006}"
+        },
+        {
+            "no": 46,
+            "test": "N01 no DQ-COM-004 issue on any weekend or holiday",
+            "actual": "0",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "0"
+        },
+        {
+            "no": 47,
+            "test": "N02 missing-session issues are exactly the 2 seeded gaps",
+            "actual": "JPM 2026-01-13, XOM 2026-02-27",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "JPM 2026-01-13, XOM 2026-02-27"
+        },
+        {
+            "no": 48,
+            "test": "N03 anomaly rules fire only on seeded rows (XOM 01-14, JNJ 02-10, MSFT 02-03)",
+            "actual": "JNJ 2026-02-10 DQ-ANO-002, MSFT 2026-02-03 DQ-ANO-003, XOM 2026-01-14 DQ-ANO-001, XOM 2026-01-14 DQ-ANO-003",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "JNJ 2026-02-10 DQ-ANO-002, MSFT 2026-02-03 DQ-ANO-003, XOM 2026-01-14 DQ-ANO-001, XOM 2026-01-14 DQ-ANO-003"
+        },
+        {
+            "no": 49,
+            "test": "N04 timeliness: load delay vs snapshot cutoff flagged for P1 (batch-level, no record)",
+            "actual": "1",
+            "passed": true,
+            "section": "1 fixtures",
+            "expected": "1"
+        },
+        {
+            "no": 50,
+            "test": "B3 CORPORATE_ACTIONS: clean+flagged+quarantined+redundant+held = received",
+            "actual": "11",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "11"
+        },
+        {
+            "no": 51,
+            "test": "B2 PRICES: clean+flagged+quarantined+redundant+held = received",
+            "actual": "395",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "395"
+        },
+        {
+            "no": 52,
+            "test": "B1 COMPANY_REFERENCE: clean+flagged+quarantined+redundant+held = received",
+            "actual": "11",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "11"
+        },
+        {
+            "no": 53,
+            "test": "B3 logged accepted/rejected/flagged match outcome view",
+            "actual": "3/7/0",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "3/7/0"
+        },
+        {
+            "no": 54,
+            "test": "B2 logged accepted/rejected/flagged match outcome view",
+            "actual": "314/80/6",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "314/80/6"
+        },
+        {
+            "no": 55,
+            "test": "B1 logged accepted/rejected/flagged match outcome view",
+            "actual": "5/5/1",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "5/5/1"
+        },
+        {
+            "no": 56,
+            "test": "P1 record pass rate equals manual calculation",
+            "actual": "79.49",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "79.49"
+        },
+        {
+            "no": 57,
+            "test": "Anomaly-only records count as passing (F08 XOM 01-14 not a confirmed defect)",
+            "actual": "false",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "false"
+        },
+        {
+            "no": 58,
+            "test": "Dimension scores: 7 rows, none NULL (non-zero denominators)",
+            "actual": "7 rows, 0 null",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "7 rows, 0 null"
+        },
+        {
+            "no": 59,
+            "test": "Promoted reported prices are rounded to cents",
+            "actual": "0",
+            "passed": true,
+            "section": "2 counts",
+            "expected": "0"
+        },
+        {
+            "no": 60,
+            "test": "Re-validation leaves issue, failure and core counts unchanged",
+            "actual": "issues=110 failures=109 companies=5 prices=314 actions=3",
+            "passed": true,
+            "section": "3 idempotency",
+            "expected": "issues=110 failures=109 companies=5 prices=314 actions=3"
+        },
+        {
+            "no": 61,
+            "test": "Re-detected issue: same row, detection_count incremented",
+            "actual": "2",
+            "passed": true,
+            "section": "3 idempotency",
+            "expected": "2"
+        },
+        {
+            "no": 62,
+            "test": "Identical re-delivery adds no production rows",
+            "actual": "314",
+            "passed": true,
+            "section": "4 re-ingestion",
+            "expected": "314"
+        },
+        {
+            "no": 63,
+            "test": "Identical re-delivery adds no issues (other than its own batch timeliness)",
+            "actual": "109",
+            "passed": true,
+            "section": "4 re-ingestion",
+            "expected": "109"
+        },
+        {
+            "no": 64,
+            "test": "No revision conflicts raised for identical values",
+            "actual": "0",
+            "passed": true,
+            "section": "4 re-ingestion",
+            "expected": "0"
+        },
+        {
+            "no": 65,
+            "test": "Duplicate defect in P2 maps to the SAME issue (detection_count >= 2)",
+            "actual": "true",
+            "passed": true,
+            "section": "4 re-ingestion",
+            "expected": "true"
+        },
+        {
+            "no": 66,
+            "test": "P2 failures attributed to P2 records (lineage per batch)",
+            "actual": "true",
+            "passed": true,
+            "section": "4 re-ingestion",
+            "expected": "true"
+        },
+        {
+            "no": 67,
+            "test": "Conflicting re-delivery raises DQ-CNS-006",
+            "actual": "1",
+            "passed": true,
+            "section": "5 revision",
+            "expected": "1"
+        },
+        {
+            "no": 68,
+            "test": "Production value NOT overwritten",
+            "actual": "200.550000",
+            "passed": true,
+            "section": "5 revision",
+            "expected": "200.550000"
+        },
+        {
+            "no": 69,
+            "test": "Revised record counted as held for review",
+            "actual": "1",
+            "passed": true,
+            "section": "5 revision",
+            "expected": "1"
+        },
+        {
+            "no": 70,
+            "test": "Missing-session issue auto-resolved",
+            "actual": "RESOLVED",
+            "passed": true,
+            "section": "6 late arrival",
+            "expected": "RESOLVED"
+        },
+        {
+            "no": 71,
+            "test": "Late record promoted to production",
+            "actual": "1",
+            "passed": true,
+            "section": "6 late arrival",
+            "expected": "1"
+        },
+        {
+            "no": 72,
+            "test": "Gap closed: JPM 01-14 +20% is now a true one-day return and is flagged",
+            "actual": "DQ-ANO-001",
+            "passed": true,
+            "section": "6 late arrival",
+            "expected": "DQ-ANO-001"
+        },
+        {
+            "no": 73,
+            "test": "Neighbour flag attributed to the batch of the flagged record (P1)",
+            "actual": "2",
+            "passed": true,
+            "section": "6 late arrival",
+            "expected": "2"
+        },
+        {
+            "no": 74,
+            "test": "Dismissed anomaly stays DISMISSED after re-validation",
+            "actual": "DISMISSED",
+            "passed": true,
+            "section": "7 workflow",
+            "expected": "DISMISSED"
+        },
+        {
+            "no": 75,
+            "test": "Resolved issue stays RESOLVED when the SAME batch is re-validated",
+            "actual": "RESOLVED",
+            "passed": true,
+            "section": "7 workflow",
+            "expected": "RESOLVED"
+        },
+        {
+            "no": 76,
+            "test": "Resolved issue REOPENS when a new batch repeats the defect",
+            "actual": "OPEN",
+            "passed": true,
+            "section": "7 workflow",
+            "expected": "OPEN"
+        },
+        {
+            "no": 77,
+            "test": "Invalid transition DISMISSED -> RESOLVED rejected",
+            "actual": "error 23514",
+            "passed": true,
+            "section": "7 workflow",
+            "expected": "error 23514"
+        }
+    ],
+    "totals": {
+        "tests": 77,
+        "failed": 0,
+        "passed": 77
+    },
+    "batches": [
+        {
+            "clean": 4,
+            "status": "SUCCEEDED",
+            "batch_type": "COMPANY_REFERENCE",
+            "quarantined": 5,
+            "validated_at": "2026-11-24T15:46:47.335924+01:00",
+            "snapshot_label": "synthetic_fixture_v1",
+            "held_for_review": 0,
+            "start_timestamp": "2026-11-24T15:46:47.087775+01:00",
+            "records_received": 11,
+            "records_evaluated": 11,
+            "ingestion_batch_id": 1,
+            "accepted_with_flags": 1,
+            "record_pass_rate_pct": 45.45,
+            "redundant_duplicates": 1,
+            "records_without_confirmed_defect": 5
+        },
+        {
+            "clean": 307,
+            "status": "SUCCEEDED",
+            "batch_type": "PRICES",
+            "quarantined": 80,
+            "validated_at": "2026-11-24T15:46:47.599438+01:00",
+            "snapshot_label": "synthetic_fixture_v1",
+            "held_for_review": 0,
+            "start_timestamp": "2026-11-24T15:46:47.087775+01:00",
+            "records_received": 395,
+            "records_evaluated": 395,
+            "ingestion_batch_id": 2,
+            "accepted_with_flags": 7,
+            "record_pass_rate_pct": 79.49,
+            "redundant_duplicates": 1,
+            "records_without_confirmed_defect": 314
+        },
+        {
+            "clean": 3,
+            "status": "SUCCEEDED",
+            "batch_type": "CORPORATE_ACTIONS",
+            "quarantined": 7,
+            "validated_at": "2026-11-24T15:46:47.391993+01:00",
+            "snapshot_label": "synthetic_fixture_v1",
+            "held_for_review": 0,
+            "start_timestamp": "2026-11-24T15:46:47.087775+01:00",
+            "records_received": 11,
+            "records_evaluated": 11,
+            "ingestion_batch_id": 3,
+            "accepted_with_flags": 0,
+            "record_pass_rate_pct": 27.27,
+            "redundant_duplicates": 1,
+            "records_without_confirmed_defect": 3
+        },
+        {
+            "clean": 62,
+            "status": "SUCCEEDED",
+            "batch_type": "PRICES",
+            "quarantined": 4,
+            "validated_at": "2026-11-24T15:46:47.599438+01:00",
+            "snapshot_label": "synthetic_fixture_p2",
+            "held_for_review": 0,
+            "start_timestamp": "2026-11-24T15:46:47.39774+01:00",
+            "records_received": 67,
+            "records_evaluated": 67,
+            "ingestion_batch_id": 4,
+            "accepted_with_flags": 0,
+            "record_pass_rate_pct": 92.54,
+            "redundant_duplicates": 1,
+            "records_without_confirmed_defect": 62
+        },
+        {
+            "clean": 0,
+            "status": "SUCCEEDED",
+            "batch_type": "PRICES",
+            "quarantined": 0,
+            "validated_at": "2026-11-24T15:46:47.599438+01:00",
+            "snapshot_label": "synthetic_fixture_p3",
+            "held_for_review": 1,
+            "start_timestamp": "2026-11-24T15:46:47.442352+01:00",
+            "records_received": 1,
+            "records_evaluated": 1,
+            "ingestion_batch_id": 5,
+            "accepted_with_flags": 0,
+            "record_pass_rate_pct": 100.00,
+            "redundant_duplicates": 0,
+            "records_without_confirmed_defect": 1
+        },
+        {
+            "clean": 1,
+            "status": "SUCCEEDED",
+            "batch_type": "PRICES",
+            "quarantined": 0,
+            "validated_at": "2026-11-24T15:46:47.599438+01:00",
+            "snapshot_label": "synthetic_fixture_p4",
+            "held_for_review": 0,
+            "start_timestamp": "2026-11-24T15:46:47.479242+01:00",
+            "records_received": 1,
+            "records_evaluated": 1,
+            "ingestion_batch_id": 6,
+            "accepted_with_flags": 0,
+            "record_pass_rate_pct": 100.00,
+            "redundant_duplicates": 0,
+            "records_without_confirmed_defect": 1
+        },
+        {
+            "clean": 0,
+            "status": "SUCCEEDED",
+            "batch_type": "PRICES",
+            "quarantined": 1,
+            "validated_at": "2026-11-24T15:46:47.599438+01:00",
+            "snapshot_label": "synthetic_fixture_p5",
+            "held_for_review": 0,
+            "start_timestamp": "2026-11-24T15:46:47.574893+01:00",
+            "records_received": 1,
+            "records_evaluated": 1,
+            "ingestion_batch_id": 7,
+            "accepted_with_flags": 0,
+            "record_pass_rate_pct": 0.00,
+            "redundant_duplicates": 0,
+            "records_without_confirmed_defect": 0
+        }
+    ],
+    "command": "scripts/run_quality_tests.sh",
+    "dataset": "SYNTHETIC",
+    "fixtures": [
+        {
+            "ticker": "JNJ",
+            "dataset": "ACTION",
+            "fixture_id": "A30",
+            "record_key": "2026-02-23|DIVIDEND",
+            "description": "Valid dividend",
+            "expected_rules": [
+            ],
+            "expected_outcome": "PROMOTED"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "ACTION",
+            "fixture_id": "A31",
+            "record_key": "2026-02-06|STOCK_SPLIT",
+            "description": "Valid 4-for-1 split",
+            "expected_rules": [
+            ],
+            "expected_outcome": "PROMOTED"
+        },
+        {
+            "ticker": "MSFT",
+            "dataset": "ACTION",
+            "fixture_id": "A32",
+            "record_key": "2026-02-10|DIVIDEND",
+            "description": "Negative dividend",
+            "expected_rules": [
+                "DQ-VAL-010"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "XOM",
+            "dataset": "ACTION",
+            "fixture_id": "A33",
+            "record_key": "2026-02-11|STOCK_SPLIT",
+            "description": "Zero split ratio",
+            "expected_rules": [
+                "DQ-VAL-011"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "JPM",
+            "dataset": "ACTION",
+            "fixture_id": "A34",
+            "record_key": "2026-02-12|DIVIDEND",
+            "description": "Exact duplicate dividend",
+            "expected_rules": [
+                "DQ-UNI-003"
+            ],
+            "expected_outcome": "ONE_PROMOTED_REST_REDUNDANT"
+        },
+        {
+            "ticker": "JPM",
+            "dataset": "ACTION",
+            "fixture_id": "A35",
+            "record_key": "2026-01-30|DIVIDEND",
+            "description": "Conflicting dividend amounts",
+            "expected_rules": [
+                "DQ-UNI-004"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "JNJ",
+            "dataset": "ACTION",
+            "fixture_id": "A36",
+            "record_key": "2026-02-14|DIVIDEND",
+            "description": "Ex-date on a Saturday",
+            "expected_rules": [
+                "DQ-VAL-007"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "ACTION",
+            "fixture_id": "A37",
+            "record_key": "2026-02-09|SPINOFF",
+            "description": "Unsupported action type",
+            "expected_rules": [
+                "DQ-VAL-009"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "MCD",
+            "dataset": "ACTION",
+            "fixture_id": "A38",
+            "record_key": "2026-02-02|DIVIDEND",
+            "description": "Company reference failed validation",
+            "expected_rules": [
+                "DQ-COM-007"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "PRICE",
+            "fixture_id": "C01",
+            "record_key": "2026-01-05",
+            "description": "Valid control record",
+            "expected_rules": [
+            ],
+            "expected_outcome": "PROMOTED"
+        },
+        {
+            "ticker": "JNJ",
+            "dataset": "PRICE",
+            "fixture_id": "C02",
+            "record_key": "2026-02-02",
+            "description": "Valid control record",
+            "expected_rules": [
+            ],
+            "expected_outcome": "PROMOTED"
+        },
+        {
+            "ticker": "XOM",
+            "dataset": "PRICE",
+            "fixture_id": "C03",
+            "record_key": "2026-01-13",
+            "description": "Valid control record the day before a large move",
+            "expected_rules": [
+            ],
+            "expected_outcome": "PROMOTED"
+        },
+        {
+            "ticker": "XOM",
+            "dataset": "PRICE",
+            "fixture_id": "C04",
+            "record_key": "2026-01-15",
+            "description": "Day after a level shift: normal move, not flagged",
+            "expected_rules": [
+            ],
+            "expected_outcome": "PROMOTED"
+        },
+        {
+            "ticker": "JNJ",
+            "dataset": "PRICE",
+            "fixture_id": "C05",
+            "record_key": "2026-01-21",
+            "description": "Day after a quarantined record: gap return not evaluated, nothing flagged",
+            "expected_rules": [
+            ],
+            "expected_outcome": "PROMOTED"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "PRICE",
+            "fixture_id": "F01",
+            "record_key": "2026-01-06",
+            "description": "Exact duplicate: first copy promoted, second not",
+            "expected_rules": [
+                "DQ-UNI-001"
+            ],
+            "expected_outcome": "ONE_PROMOTED_REST_REDUNDANT"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "PRICE",
+            "fixture_id": "F02",
+            "record_key": "2026-01-07",
+            "description": "Conflicting duplicate: both copies quarantined",
+            "expected_rules": [
+                "DQ-UNI-002"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "MSFT",
+            "dataset": "PRICE",
+            "fixture_id": "F03",
+            "record_key": "2026-01-08",
+            "description": "Null close",
+            "expected_rules": [
+                "DQ-COM-001"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "MSFT",
+            "dataset": "PRICE",
+            "fixture_id": "F04",
+            "record_key": "2026-01-09",
+            "description": "Negative volume",
+            "expected_rules": [
+                "DQ-VAL-003"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "APPL",
+            "dataset": "PRICE",
+            "fixture_id": "F05",
+            "record_key": "2026-01-09",
+            "description": "Invalid ticker (typo)",
+            "expected_rules": [
+                "DQ-VAL-004"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "JPM",
+            "dataset": "PRICE",
+            "fixture_id": "F06",
+            "record_key": "2026-01-12",
+            "description": "High below low: one row, three consistency failures",
+            "expected_rules": [
+                "DQ-CNS-001",
+                "DQ-CNS-002",
+                "DQ-CNS-003"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "JPM",
+            "dataset": "NO_RECORD",
+            "fixture_id": "F07",
+            "record_key": "2026-01-13",
+            "description": "Missing trading session: issue without raw record",
+            "expected_rules": [
+                "DQ-COM-004"
+            ],
+            "expected_outcome": "ISSUE_ONLY"
+        },
+        {
+            "ticker": "XOM",
+            "dataset": "PRICE",
+            "fixture_id": "F08",
+            "record_key": "2026-01-14",
+            "description": "Legitimate +15% move: flagged for review, NOT discarded",
+            "expected_rules": [
+                "DQ-ANO-001",
+                "DQ-ANO-003"
+            ],
+            "expected_outcome": "PROMOTED_FLAGGED"
+        },
+        {
+            "ticker": "MSFT",
+            "dataset": "PRICE",
+            "fixture_id": "F09",
+            "record_key": "2026-01-15",
+            "description": "Multiple failures: zero open (invalid AND outside day range) and missing volume",
+            "expected_rules": [
+                "DQ-CNS-002",
+                "DQ-COM-002",
+                "DQ-VAL-002"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "JNJ",
+            "dataset": "PRICE",
+            "fixture_id": "F10",
+            "record_key": "2026-01-19",
+            "description": "Record dated on an exchange holiday",
+            "expected_rules": [
+                "DQ-VAL-007"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "NO_RECORD",
+            "fixture_id": "F10b",
+            "record_key": "2026-01-19",
+            "description": "Holiday: no missing-session issue for a closed market",
+            "expected_rules": [
+            ],
+            "expected_outcome": "NOT_PROMOTED"
+        },
+        {
+            "ticker": "JNJ",
+            "dataset": "PRICE",
+            "fixture_id": "F11",
+            "record_key": "2026-01-20",
+            "description": "Unparseable open price \"abc\"",
+            "expected_rules": [
+                "DQ-VAL-001"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "XOM",
+            "dataset": "PRICE",
+            "fixture_id": "F12",
+            "record_key": "2027-01-04",
+            "description": "Future date outside the snapshot window",
+            "expected_rules": [
+                "DQ-VAL-006"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "JPM",
+            "dataset": "PRICE",
+            "fixture_id": "F13",
+            "record_key": "2026-01-21",
+            "description": "Price currency differs from company currency",
+            "expected_rules": [
+                "DQ-CNS-004"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "JNJ",
+            "dataset": "PRICE",
+            "fixture_id": "F14",
+            "record_key": "2026-02-10",
+            "description": "Volume spike 6x: flagged, promoted",
+            "expected_rules": [
+                "DQ-ANO-002"
+            ],
+            "expected_outcome": "PROMOTED_FLAGGED"
+        },
+        {
+            "ticker": "MSFT",
+            "dataset": "PRICE",
+            "fixture_id": "F15",
+            "record_key": "2026-02-03",
+            "description": "Adjusted series steps +2% with no corporate action",
+            "expected_rules": [
+                "DQ-ANO-003",
+                "DQ-CNS-007"
+            ],
+            "expected_outcome": "PROMOTED_FLAGGED"
+        },
+        {
+            "ticker": "MCD",
+            "dataset": "PRICE",
+            "fixture_id": "F16",
+            "record_key": "2026-01-05",
+            "description": "Price for a company whose reference data was quarantined",
+            "expected_rules": [
+                "DQ-COM-007"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "XOM",
+            "dataset": "PRICE",
+            "fixture_id": "F17",
+            "record_key": "2026-13-45",
+            "description": "Impossible date",
+            "expected_rules": [
+                "DQ-VAL-005"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "NO_RECORD",
+            "fixture_id": "F18",
+            "record_key": "2026-01-10",
+            "description": "Saturday: no missing-session issue",
+            "expected_rules": [
+            ],
+            "expected_outcome": "NOT_PROMOTED"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "PRICE",
+            "fixture_id": "F19",
+            "record_key": "2026-01-26",
+            "description": "Fractional volume",
+            "expected_rules": [
+                "DQ-VAL-008"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "JPM",
+            "dataset": "PRICE",
+            "fixture_id": "F21",
+            "record_key": "2026-01-14",
+            "description": "+20% across a 3-session gap: NOT evaluated as a one-day return",
+            "expected_rules": [
+            ],
+            "expected_outcome": "PROMOTED"
+        },
+        {
+            "ticker": "XOM",
+            "dataset": "NO_RECORD",
+            "fixture_id": "F23",
+            "record_key": "2026-02-27",
+            "description": "Last session of the window missing: completeness + timeliness",
+            "expected_rules": [
+                "DQ-COM-004",
+                "DQ-TIM-002"
+            ],
+            "expected_outcome": "ISSUE_ONLY"
+        },
+        {
+            "ticker": "",
+            "dataset": "PRICE",
+            "fixture_id": "F24",
+            "record_key": "2026-01-09",
+            "description": "Blank ticker",
+            "expected_rules": [
+                "DQ-COM-003"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "PRICE",
+            "fixture_id": "F25",
+            "record_key": "2026-01-27",
+            "description": "Volume \"1_000_000\": underscore digit grouping rejected",
+            "expected_rules": [
+                "DQ-VAL-001"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "AAPL",
+            "dataset": "REFERENCE",
+            "fixture_id": "R01",
+            "record_key": null,
+            "description": "Valid reference record",
+            "expected_rules": [
+            ],
+            "expected_outcome": "PROMOTED"
+        },
+        {
+            "ticker": "XOM",
+            "dataset": "REFERENCE",
+            "fixture_id": "R02",
+            "record_key": null,
+            "description": "Exact duplicate reference row",
+            "expected_rules": [
+                "DQ-UNI-005"
+            ],
+            "expected_outcome": "ONE_PROMOTED_REST_REDUNDANT"
+        },
+        {
+            "ticker": "JNJ",
+            "dataset": "REFERENCE",
+            "fixture_id": "R03",
+            "record_key": null,
+            "description": "Provider sector Energy vs assigned Healthcare: informational",
+            "expected_rules": [
+                "DQ-CNS-005"
+            ],
+            "expected_outcome": "PROMOTED_FLAGGED"
+        },
+        {
+            "ticker": "MCD",
+            "dataset": "REFERENCE",
+            "fixture_id": "R04",
+            "record_key": null,
+            "description": "Invalid currency code US$",
+            "expected_rules": [
+                "DQ-VAL-012"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "ZZZZ",
+            "dataset": "REFERENCE",
+            "fixture_id": "R05",
+            "record_key": null,
+            "description": "Ticker not in universe",
+            "expected_rules": [
+                "DQ-VAL-004"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "NKE",
+            "dataset": "REFERENCE",
+            "fixture_id": "R06",
+            "record_key": null,
+            "description": "Blank company name (critical) and missing industry (warning)",
+            "expected_rules": [
+                "DQ-COM-005",
+                "DQ-COM-006"
+            ],
+            "expected_outcome": "QUARANTINED"
+        },
+        {
+            "ticker": "TSLA",
+            "dataset": "REFERENCE",
+            "fixture_id": "R07",
+            "record_key": null,
+            "description": "Conflicting duplicate reference rows",
+            "expected_rules": [
+                "DQ-UNI-006"
+            ],
+            "expected_outcome": "QUARANTINED"
+        }
+    ],
+    "sections": [
+        {
+            "tests": 49,
+            "passed": 49,
+            "section": "1 fixtures"
+        },
+        {
+            "tests": 10,
+            "passed": 10,
+            "section": "2 counts"
+        },
+        {
+            "tests": 2,
+            "passed": 2,
+            "section": "3 idempotency"
+        },
+        {
+            "tests": 5,
+            "passed": 5,
+            "section": "4 re-ingestion"
+        },
+        {
+            "tests": 3,
+            "passed": 3,
+            "section": "5 revision"
+        },
+        {
+            "tests": 4,
+            "passed": 4,
+            "section": "6 late arrival"
+        },
+        {
+            "tests": 4,
+            "passed": 4,
+            "section": "7 workflow"
+        }
+    ],
+    "generated_at": "2026-11-24T15:46:47.65046+01:00"
+}

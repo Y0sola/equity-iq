@@ -1,0 +1,17 @@
+# EquityIQ Python dependencies — Python 3.12, installed into .venv.
+# Exact versions verified in Phase 2 (2026-11-24). Pinned so the ingestion
+# behaviour (especially yfinance price adjustment defaults) is reproducible.
+psycopg[binary]==3.3.9      # PostgreSQL driver (parameterised queries, transactions)
+python-dotenv==1.2.4        # load .env credentials
+pandas==3.1.1               # used only to read provider DataFrames — no business logic
+numpy==2.5.5
+yfinance==1.8.0             # Yahoo Finance historical data (subject to Yahoo terms)
+curl_cffi==0.17.0           # yfinance HTTP transport
+exchange_calendars==4.13.3  # XNYS trading calendar incl. holidays and early closes
+pytest==9.2.0
+
+# Phase 5 — read-only API (verified 2026-11-24)
+fastapi==0.165.0
+uvicorn==0.54.0
+psycopg-pool==3.3.3         # connection pool for the read-only role
+httpx==0.28.1               # FastAPI TestClient (API tests)

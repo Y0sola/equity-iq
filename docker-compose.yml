@@ -1,0 +1,23 @@
+# Alternative to a native PostgreSQL install. Usage:
+#   docker compose up -d        then set PG_ADMIN_USER=postgres in .env
+#   scripts/db_init.sh && scripts/db_init.sh --test
+# The primary development setup for this project is Homebrew postgresql@17
+# (see README); this file gives reviewers a reproducible alternative.
+services:
+  postgres:
+    image: postgres:17
+    container_name: equityiq-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${EQUITYIQ_DB_PASSWORD:-change_me}
+      POSTGRES_DB: postgres
+    ports:
+      - "${EQUITYIQ_DB_PORT:-5432}:5432"
+    volumes:
+      - equityiq_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
+volumes:
+  equityiq_pgdata:

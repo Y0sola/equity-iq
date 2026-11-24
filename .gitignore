@@ -1,0 +1,65 @@
+# ---------------------------------------------------------------- secrets & credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+.pgpass
+secrets/
+credentials*.json
+
+# ---------------------------------------------------------------- private development notes (kept locally, not published)
+EquityIQ_Project_Brief.md
+CLAUDE.md
+PROGRESS.md
+docs/learning_notes.md
+notes/
+*.private.md
+
+# ---------------------------------------------------------------- local tool configuration
+.claude/
+.idea/
+.vscode/
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# ---------------------------------------------------------------- Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# ---------------------------------------------------------------- Node / frontend build
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+npm-debug.log*
+
+# ---------------------------------------------------------------- data
+# Raw provider downloads (Yahoo Finance) are NOT redistributed: the repository ships
+# reproducible download scripts instead. Only synthetic test outputs are committed.
+data/raw/*
+data/processed/*
+data/sample/*
+!data/**/.gitkeep
+
+# Database dumps and local databases
+*.dump
+*.backup
+*.sql.gz
+*.sqlite
+*.db
+
+# ---------------------------------------------------------------- logs & temp
+*.log
+logs/
+tmp/

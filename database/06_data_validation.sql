@@ -531,7 +531,7 @@ BEGIN
                CASE WHEN core.to_reported_price(t.high_value)  <> p.high_price  THEN 'high '  || core.to_reported_price(t.high_value)  || ' vs ' || p.high_price  END,
                CASE WHEN core.to_reported_price(t.low_value)   <> p.low_price   THEN 'low '   || core.to_reported_price(t.low_value)   || ' vs ' || p.low_price   END,
                CASE WHEN core.to_reported_price(t.close_value) <> p.close_price THEN 'close ' || core.to_reported_price(t.close_value) || ' vs ' || p.close_price END,
-               CASE WHEN core.to_adjusted_price(t.adjusted_close_value) <> p.adjusted_close
+               CASE WHEN abs(t.adjusted_close_value - p.adjusted_close) > audit.rule_threshold('DQ-CNS-006') * abs(p.adjusted_close)
                     THEN 'adj close ' || core.to_adjusted_price(t.adjusted_close_value) || ' vs ' || p.adjusted_close END,
                CASE WHEN t.volume_value <> p.volume THEN 'volume ' || t.volume_value || ' vs ' || p.volume END),
            'equal to production record from raw ' || p.raw_record_id
@@ -543,11 +543,15 @@ BEGIN
        AND pr.ingestion_batch_id <> p_batch      -- production value came from an earlier batch
        AND num_nulls(t.open_value, t.high_value, t.low_value, t.close_value,
                      t.adjusted_close_value, t.volume_value) = 0
-       AND (core.to_reported_price(t.open_value), core.to_reported_price(t.high_value),
-            core.to_reported_price(t.low_value),  core.to_reported_price(t.close_value),
-            core.to_adjusted_price(t.adjusted_close_value), t.volume_value)
-           IS DISTINCT FROM
-           (p.open_price, p.high_price, p.low_price, p.close_price, p.adjusted_close, p.volume::numeric);
+       AND (   (core.to_reported_price(t.open_value), core.to_reported_price(t.high_value),
+                core.to_reported_price(t.low_value),  core.to_reported_price(t.close_value), t.volume_value)
+               IS DISTINCT FROM
+               (p.open_price, p.high_price, p.low_price, p.close_price, p.volume::numeric)
+            -- Adjusted close is recomputed by the provider in float32 on every download, so
+            -- 1-2 float32-step differences are noise, not revisions: relative tolerance from
+            -- the rule catalogue (found by comparing two real downloads; see data_acquisition.md).
+            OR abs(t.adjusted_close_value - p.adjusted_close)
+               > audit.rule_threshold('DQ-CNS-006') * abs(p.adjusted_close));
 
     RETURN audit.record_violations(p_batch);
 END;

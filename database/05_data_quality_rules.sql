@@ -205,10 +205,10 @@ VALUES
  'mapped provider sector = assigned sector',
  'Classification disagreements change sector aggregates; a person should confirm which is intended.'),
 
-('DQ-CNS-006', 'source_value_conflict', 'CONSISTENCY', 'WARNING', 'REVIEWABLE_ANOMALY', 'FLAG_FOR_REVIEW', NULL,
+('DQ-CNS-006', 'source_value_conflict', 'CONSISTENCY', 'WARNING', 'REVIEWABLE_ANOMALY', 'FLAG_FOR_REVIEW', 0.000001,
  'staging.raw_stock_prices vs core.stock_prices',
- 'A later batch delivers different values for a record already in production. The production value is kept and the new value is held for review, never silently overwritten.',
- 'Re-delivered values equal production values (after the documented rounding).',
+ 'A later batch delivers different values for a record already in production. The production value is kept and the new value is held for review, never silently overwritten. Reported OHLC (cents) and volume must match exactly; adjusted close, a value the provider recomputes in 32-bit floating point, is compared with a relative tolerance (threshold 1e-6, about 8 float32 steps): two downloads 2h45m apart differed in 904 adjusted closes by only 1-2 float32 steps (max 2.4e-7 relative).',
+ 'Re-delivered reported prices and volume equal production; |adjusted close difference| <= 1e-6 x production adjusted close.',
  'Vendor revisions must be visible and approved; silent overwrites destroy auditability.'),
 
 ('DQ-CNS-007', 'adjustment_step_without_action', 'CONSISTENCY', 'WARNING', 'REVIEWABLE_ANOMALY', 'FLAG_FOR_REVIEW', 0.00001,

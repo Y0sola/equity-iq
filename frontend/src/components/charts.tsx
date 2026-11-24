@@ -7,6 +7,17 @@ import { fmtDate, fmtNum, fmtPct, shortDate } from "../lib/format";
 
 export interface LineSeries { key: string; label: string; color: string; points: { date: string; value: number | null }[]; dashed?: boolean }
 
+/** One axis tick per calendar month (first trading date seen in each month). */
+function monthTicks(dates: string[]): string[] {
+  const seen = new Set<string>();
+  return dates.filter((d) => {
+    const m = d.slice(0, 7);
+    if (seen.has(m)) return false;
+    seen.add(m);
+    return true;
+  });
+}
+
 /** Pivot series into one row per date for Recharts. */
 function pivot(series: LineSeries[]) {
   const rows = new Map<string, Record<string, number | string | null>>();
@@ -30,8 +41,8 @@ export function LineSeriesChart({ series, height = 300, yLabel, reference, value
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 16, bottom: 4, left: 8 }}>
           <CartesianGrid stroke={CHART.grid} vertical={false} />
-          <XAxis dataKey="date" tickFormatter={shortDate} minTickGap={40} tick={{ fill: CHART.axis, fontSize: 11 }}
-            axisLine={{ stroke: CHART.grid }} tickLine={false} />
+          <XAxis dataKey="date" tickFormatter={shortDate} ticks={monthTicks(data.map((d) => String(d.date)))} minTickGap={24}
+            tick={{ fill: CHART.axis, fontSize: 11 }} axisLine={{ stroke: CHART.grid }} tickLine={false} />
           <YAxis tick={{ fill: CHART.axis, fontSize: 11 }} axisLine={false} tickLine={false} width={56}
             domain={["auto", "auto"]} tickFormatter={(v: number) => valueFormat(v)}
             label={{ value: yLabel, angle: -90, position: "insideLeft", fill: CHART.axis, fontSize: 11, dy: 40 }} />
@@ -90,7 +101,8 @@ export function VolumeChart({ points, height = 140 }: { points: { date: string; 
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={points} margin={{ top: 4, right: 16, bottom: 4, left: 8 }} barCategoryGap={1}>
           <CartesianGrid stroke={CHART.grid} vertical={false} />
-          <XAxis dataKey="date" tickFormatter={shortDate} minTickGap={40} tick={{ fill: CHART.axis, fontSize: 11 }} axisLine={{ stroke: CHART.grid }} tickLine={false} />
+          <XAxis dataKey="date" tickFormatter={shortDate} ticks={monthTicks(points.map((p) => p.date))} minTickGap={24}
+            tick={{ fill: CHART.axis, fontSize: 11 }} axisLine={{ stroke: CHART.grid }} tickLine={false} />
           <YAxis tick={{ fill: CHART.axis, fontSize: 11 }} axisLine={false} tickLine={false} width={56}
             tickFormatter={(v: number) => Intl.NumberFormat("en-US", { notation: "compact" }).format(v)}
             label={{ value: "Shares", angle: -90, position: "insideLeft", fill: CHART.axis, fontSize: 11, dy: 20 }} />

@@ -68,7 +68,7 @@ Severity: CRITICAL / WARNING / INFO. Class: Defect = confirmed defect; Anomaly =
 | DQ-CNS-003 | close_outside_range | CRITICAL | Defect | QUARANTINE | low_price <= close_price <= high_price | The closing price must lie within the day's range. | F06 |
 | DQ-CNS-004 | price_currency_mismatch | CRITICAL | Defect | QUARANTINE | price currency = company currency | Mixing currencies in one series produces false returns. | F13 |
 | DQ-CNS-005 | provider_sector_mismatch | INFO | Anomaly | FLAG_FOR_REVIEW | mapped provider sector = assigned sector | Classification disagreements change sector aggregates; a person should confirm which is intended. | R03 |
-| DQ-CNS-006 | source_value_conflict | WARNING | Anomaly | FLAG_FOR_REVIEW | Re-delivered values equal production values (after the documented rounding). | Vendor revisions must be visible and approved; silent overwrites destroy auditability. | test section 5 |
+| DQ-CNS-006 | source_value_conflict | WARNING | Anomaly | FLAG_FOR_REVIEW | Re-delivered reported prices and volume equal production; \|adjusted close difference\| <= 1e-6 x production adjusted close. | Vendor revisions must be visible and approved; silent overwrites destroy auditability. | test sections 5 and 5b (incl. float-noise tolerance) |
 | DQ-CNS-007 | adjustment_step_without_action | WARNING | Anomaly | FLAG_FOR_REVIEW | Ratio adjusted_close / close_price only changes on corporate action dates. | An unexplained adjustment step means the adjusted series embeds an event we have no record of. | F15 |
 | DQ-COM-001 | missing_required_price | CRITICAL | Defect | QUARANTINE | All five price fields are present. | A daily record without prices cannot support returns, ranges or valuation; filling it would invent data. | F03 |
 | DQ-COM-002 | missing_volume | CRITICAL | Defect | QUARANTINE | Volume is present. | Volume drives liquidity analysis and volume-spike checks; zero and missing mean different things. | F09 |
@@ -130,7 +130,7 @@ Dimension definitions (latest price batch):
 
 ## Results — synthetic fixtures (test database only)
 
-`scripts/run_quality_tests.sh`: **77 tests run, 77 passed, 0 failed** (≈4 s). (76/76 at the end of Phase 3; fixture F25 was added in Phase 5 for the stricter numeric parser.)
+`scripts/run_quality_tests.sh`: **79 tests run, 79 passed, 0 failed** (≈3 s). (76 at the end of Phase 3; F25 added in Phase 5 for the stricter numeric parser; two revision-tolerance tests added in Phase 7.)
 
 | Section | Tests | Passed |
 |---|---|---|
@@ -138,7 +138,7 @@ Dimension definitions (latest price batch):
 | 2 Batch count reconciliation, pass-rate hand check, metric sanity | 10 | 10 |
 | 3 Idempotency (re-validate same batches) | 2 | 2 |
 | 4 Duplicate re-ingestion (identical new batch) | 5 | 5 |
-| 5 Provider revision held, production not overwritten | 3 | 3 |
+| 5 Provider revision held, production not overwritten; float noise in adjusted close not flagged, a 1 % change flagged | 5 | 5 |
 | 6 Late-arriving missing session | 4 | 4 |
 | 7 Issue workflow | 4 | 4 |
 
@@ -183,5 +183,6 @@ A clean first snapshot means the provider data passed every confirmed-defect rul
 ## Limitations
 - Single provider: no cross-source price verification; anomaly review needs an external source.
 - Re-delivered adjusted closes will legitimately differ after any later dividend (the whole adjusted history is restated). DQ-CNS-006 would hold those for review; a production design would version adjusted series per snapshot.
+- **Found in Phase 7 (clean reproduction):** two real downloads 2 h 45 min apart had identical reported prices, volumes and dividends, but 904 adjusted closes differed by 1–2 float32 steps (max 2.4 × 10⁻⁷ relative). The original rule compared adjusted closes at 6 decimals and held **all 904** as revisions. Adjusted close is now compared with a relative tolerance of 1 × 10⁻⁶ (`threshold_value`); reported prices and volume remain exact. Replaying both downloads after the fix: 0 false revisions; a synthetic 1 % revision is still flagged.
 - Reference data promotion is type-1 (current state overwrites); previous versions remain in staging.
 - Corporate actions extracted from the price history only cover the window; there were no splits in the real data, so split handling is tested only with synthetic fixtures.

@@ -5,6 +5,7 @@ Expected values come from database/11_quality_test_data.sql: 6 requested tickers
 """
 from __future__ import annotations
 
+import os
 import time
 
 import psycopg
@@ -19,9 +20,12 @@ def test_health_uses_read_only_role_on_test_db(client):
     r = client.get("/api/health")
     assert r.status_code == 200
     body = r.json()
-    assert body["role"] == "equityiq_reader"
+    # Compare with the configured names (.env), not hard-coded ones, so the suite works for
+    # any role/database naming (found during clean-clone reproduction).
+    assert body["role"] == os.environ["EQUITYIQ_READER_USER"]
+    assert body["role"] != os.environ["EQUITYIQ_DB_USER"]          # never the owner role
     assert body["read_only"] == "on"
-    assert body["test_database"] is True and body["database"].endswith("_test")
+    assert body["test_database"] is True and body["database"] == os.environ["EQUITYIQ_TEST_DB_NAME"]
     assert body["library_queries"] == 16
 
 

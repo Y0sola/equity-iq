@@ -1,6 +1,6 @@
 # EquityIQ — Data Dictionary
 
-Status: **updated Phase 3**. Provider behaviour (adjustment conventions, precision) is verified in [data_acquisition.md](data_acquisition.md).
+Status: **final (Phase 7)**. Provider behaviour (adjustment conventions, precision) is verified in [data_acquisition.md](data_acquisition.md).
 
 Legend: **PK** primary key · **FK** foreign key · **UK** unique · **NN** not null · **CK** check constraint.
 
@@ -201,3 +201,31 @@ Unique `(rule_id, raw_record_id, raw_action_id, raw_reference_id, affected_field
 
 ### Views
 `staging.v_raw_stock_prices_typed`, `staging.v_raw_price_fields`, `staging.v_raw_corporate_actions_typed` (parsed staging); `audit.v_record_outcomes` (outcome per raw record); quality metric views in `analytics` described in [data_quality_framework.md](data_quality_framework.md).
+
+
+---
+
+## Phase 4–5 objects
+
+### Analytics views (`database/08_financial_analysis.sql`)
+| View | Grain | Key columns |
+|---|---|---|
+| `ref.v_trading_sessions` | exchange × trading day | `session_no` (consecutive sessions differ by 1) |
+| `analytics.v_daily_returns` | price record | `return_type` (FIRST_OBSERVATION / ONE_SESSION / MULTI_SESSION), `daily_return_pct`, `daily_price_return_pct`, `multi_session_return_pct` |
+| `analytics.v_analysis_window` | one row | `base_date`, `end_date` (first/last date common to all companies) |
+| `analytics.v_moving_averages` | price record | `sma_20`, `sma_50` (NULL below minimum), `obs_n`, `sessions_spanned_n` |
+| `analytics.v_volume_analysis` / `v_volume_summary` | record / security | trailing 20-record average (no look-ahead), `volume_ratio`, `is_unusual_volume`; averages, median |
+| `analytics.v_security_performance` | security | adjusted vs price return, dividends, approximate total return, highs/lows, `max_drawdown_pct`, ranks |
+| `analytics.v_volatility` | security | sample sd of one-session returns, annualised (× √252), NULL if < 20 returns |
+| `analytics.v_normalised_performance` / `v_sector_normalised` | record / sector × day | base-100 values; equal-weight sector index |
+| `analytics.v_sector_performance` | sector | equal-weight return, index volatility, constituent volatility, volume |
+| `analytics.v_corporate_action_impact` | corporate action | reported vs adjusted ex-date return, dividend yield, move within ±2 sessions |
+
+### Presentation views (`database/10_create_views.sql`)
+`v_overview_kpis` (one row of headline figures with source and as-of), `v_security_overview` (securities table incl. not-validated tickers and quality status), `v_price_chart` (prices + SMAs + volume flags), `v_ingestion_history` (batches with outcomes and duration), `v_price_lineage` (production value → raw text → batch → request → issues).
+
+### Roles
+| Role | Purpose | Privileges |
+|---|---|---|
+| owner (`EQUITYIQ_DB_USER`) | owns all objects; runs ingestion, validation, promotion | full on its objects |
+| reader (`EQUITYIQ_READER_USER`) | used by the API only | `CONNECT`, `USAGE` on schemas, `SELECT` on tables/views, `EXECUTE` on 3 read-only helpers; role defaults `default_transaction_read_only = on`, `statement_timeout = 5s`, connection limit 20 |

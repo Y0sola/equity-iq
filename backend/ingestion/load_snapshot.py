@@ -212,8 +212,8 @@ def main() -> None:
     # Corporate actions are extracted from the price files, so they share the price checksum.
     datasets["CORPORATE_ACTIONS"] = datasets["PRICES"]
 
-    print(f"Loading snapshot {snapshot.name} into {'equityiq_test' if args.test_db else 'equityiq'}")
     with get_connection(test=args.test_db) as conn:
+        print(f"Loading snapshot {snapshot.name} into database '{conn.info.dbname}'")
         for ds in ("TRADING_CALENDAR", "COMPANY_REFERENCE", "PRICES", "CORPORATE_ACTIONS"):
             run_dataset(conn, ds, snapshot, manifest, datasets[ds]["files"], datasets[ds]["checksum"])
 

@@ -284,6 +284,28 @@ SELECT qa.check('5 revision', 'Revised record counted as held for review', '1',
                 (SELECT held_for_review::text FROM analytics.v_dq_batch_metrics WHERE ingestion_batch_id = qa.batch('P3')));
 
 
+-- 5b. Adjusted-close float noise vs a real revision (found by comparing two real downloads:
+--     904 adjusted closes differed by 1-2 float32 steps; they must NOT be held as revisions).
+SELECT qa.new_price_batch('P6', ARRAY['AAPL']);   -- create the batch once
+INSERT INTO staging.raw_stock_prices (ingestion_batch_id, source_row_number, ticker, trade_date, open_price, high_price,
+                                      low_price, close_price, adjusted_close, volume, currency, source)
+SELECT qa.batch('P6'), row_number() OVER (ORDER BY trade_date), ticker, trade_date, open_price, high_price, low_price, close_price,
+       CASE trade_date WHEN '2026-01-08' THEN (adjusted_close::numeric * 1.0000001)::text   -- float noise (1e-7 relative)
+                       WHEN '2026-01-09' THEN (adjusted_close::numeric * 1.01)::text        -- genuine 1% revision
+       END, volume, currency, source
+  FROM staging.raw_stock_prices
+ WHERE ingestion_batch_id = qa.batch('P1') AND ticker = 'AAPL' AND trade_date IN ('2026-01-08', '2026-01-09');
+SELECT qa.set_received(qa.batch('P6'));
+CALL audit.process_pending_batches();
+
+SELECT qa.check('5 revision', 'Adjusted close differing by float noise (1e-7) is NOT flagged as a revision', '0',
+                (SELECT count(*)::text FROM audit.data_quality_issues
+                  WHERE rule_id = 'DQ-CNS-006' AND ticker = 'AAPL' AND trade_date = DATE '2026-01-08'));
+SELECT qa.check('5 revision', 'Adjusted close differing by 1% IS flagged and held for review', '1 held',
+                (SELECT count(*) || ' held' FROM audit.data_quality_issues
+                  WHERE rule_id = 'DQ-CNS-006' AND ticker = 'AAPL' AND trade_date = DATE '2026-01-09'));
+
+
 -- =============================================================================
 -- 6. LATE-ARRIVING MISSING SESSION: P4 delivers JPM 2026-01-13
 -- =============================================================================

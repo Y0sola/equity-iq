@@ -11,13 +11,23 @@ An independent financial data management project that acquires real historical e
 
 **SQL is the core of the project**: validation rules, promotion to production tables, quality metrics and every financial calculation are implemented in PostgreSQL. Python is used only for data acquisition, orchestration and the API layer.
 
-> **Status: active development.** The data pipeline, quality framework, analytics, API and dashboard are implemented and tested (see [Project status](#project-status)). Final documentation, screenshots and a clean-environment reproduction are in progress.
+> **Status: active development.** The data pipeline, quality framework, analytics, API and dashboard are implemented, tested and reproduced from a clean clone of this repository (see [Project status](#project-status)). Continuous integration, automated frontend tests and a hosted demo are planned.
 > Historical snapshot only — not live data, not investment advice. Independent portfolio project, not affiliated with any data vendor or financial institution.
 
 ---
 
+## Screenshots
+
+| | |
+|---|---|
+| ![Overview](docs/screenshots/overview.png) **Overview**: headline figures with provenance, normalised sector performance | ![Data quality](docs/screenshots/data-quality.png) **Data Quality**: dimension scores with numerator, denominator and definition |
+| ![Issue detail](docs/screenshots/issue-detail.png) **Issue register**: rule explanation, handling and affected raw record | ![SQL library](docs/screenshots/sql-library.png) **SQL Library**: allowlisted, read-only queries with concepts and view definitions |
+| ![Security detail](docs/screenshots/security-detail.png) **Security detail**: adjusted close with SMA 20/50, separate volume chart, issues | ![Ingestion and lineage](docs/screenshots/ingestion-lineage.png) **Ingestion & lineage**: data flow with live counts, batch audit history incl. skipped reruns |
+
+---
+
 ## Contents
-[Business problem](#business-problem) · [Objectives](#objectives) · [Project status](#project-status) · [Verified results](#verified-results) · [Technology](#technology-stack) · [Data](#data-sources-and-scope) · [Architecture](#database-architecture) · [Data quality](#data-quality-methodology) · [Financial analysis](#financial-analysis) · [SQL competencies](#sql-competencies-demonstrated) · [API & security](#read-only-api-and-security) · [Dashboard](#dashboard) · [Testing](#testing-and-verification) · [Structure](#project-structure) · [Getting started](#getting-started) · [Roadmap](#roadmap) · [Limitations](#limitations)
+[Screenshots](#screenshots) · [Business problem](#business-problem) · [Objectives](#objectives) · [Project status](#project-status) · [Verified results](#verified-results) · [Technology](#technology-stack) · [Data](#data-sources-and-scope) · [Architecture](#database-architecture) · [Data quality](#data-quality-methodology) · [Financial analysis](#financial-analysis) · [SQL competencies](#sql-competencies-demonstrated) · [API & security](#read-only-api-and-security) · [Dashboard](#dashboard) · [Testing](#testing-and-verification) · [Structure](#project-structure) · [Getting started](#getting-started) · [Roadmap](#roadmap) · [Limitations](#limitations)
 
 ---
 
@@ -55,7 +65,7 @@ EquityIQ implements that workflow end to end for a defined universe of US equiti
 | SQL financial analytics (returns, moving averages, volatility, sectors, corporate actions) | ✅ Complete | Edge-case tests + independent cross-check |
 | Read-only API (FastAPI, 25 GET endpoints, allowlisted SQL library) | ✅ Complete | API tests including security cases |
 | Dashboard (Overview, Data Quality, SQL Library, Securities, Corporate Actions, Ingestion & Lineage) | ✅ Complete | Verified manually in the browser |
-| Final documentation, screenshots, case study, clean-environment reproduction | 🔄 In progress | |
+| Final documentation, screenshots, case study, clean-clone reproduction | ✅ Complete | Reproduction found and fixed two issues (see below) |
 | Automated frontend tests, continuous integration, hosted demo | 📋 Planned | See [Roadmap](#roadmap) |
 
 ## Verified results
@@ -77,12 +87,21 @@ All figures below were produced by the project's own scripts on **2026-11-24** a
 
 A clean first snapshot means the provider data passed every confirmed-defect rule; it does **not** by itself prove the rules work. The synthetic fixtures below do that.
 
+**Reproducibility and runtime**
+
+| Measure | Result |
+|---|---|
+| Clean-clone reproduction (README steps, new roles and databases, fresh download) | All test suites pass; same totals (5,020 prices, 72 dividends, 0 defects, 79 anomaly issues) |
+| Second download 2 h 45 min later vs original | Reported prices, volumes and dividends identical (35,140 fields); 904 adjusted closes differ by 1–2 float32 steps, now tolerated by rule DQ-CNS-006 (previously flagged as revisions — found and fixed during reproduction) |
+| Pipeline runtime | fetch 54–78 s (20 tickers, polite 1.5 s pause each) · load ≈ 1 s · validate and promote ≈ 1–5 s |
+| Query performance | each of the 16 library queries < 0.2 s; API median response 0.8–194 ms across 25 endpoints |
+
 **Synthetic data (isolated test database only)**
 
 | Measure | Result |
 |---|---|
 | Seeded fixtures, expected outcomes written before running | 45 (25 price, 9 corporate action, 7 reference, 4 missing-record cases) |
-| Data quality tests (fixtures, negative tests, idempotency, re-ingestion, revision, late arrival, workflow) | 77 / 77 passed |
+| Data quality tests (fixtures, negative tests, idempotency, re-ingestion, revisions, late arrival, workflow) | 79 / 79 passed |
 | Rules exercised by tests | 37 / 37 (35 through fixtures, 2 through scenario tests) |
 
 ## Technology stack
@@ -175,6 +194,8 @@ Diagrams and definitions: [ER diagram](docs/er_diagram.md) · [Data dictionary](
 | Timeliness | 2 | Load delay vs snapshot cutoff (never vs today's date), latest-session coverage |
 | Anomaly (review only) | 3 | Daily move > 10 %, volume > 3× trailing 20-session average, return > 4 standard deviations (no look-ahead) |
 
+**Provider revisions vs noise.** A re-delivered value that differs from production is held for review, never silently overwritten. Reported prices and volume must match exactly; the provider's adjusted close, recomputed in 32-bit floating point on every download, is compared with a documented relative tolerance (1 × 10⁻⁶).
+
 **Confirmed defects vs reviewable anomalies.** Provably wrong records (e.g. high below low) are **quarantined**: kept in staging, never published. Unusual but possibly genuine records (e.g. a 31 % daily move) are **published and flagged** for an analyst. A database constraint makes it impossible to configure an anomaly rule to quarantine data.
 
 **Records vs issues.** `audit.rule_failures` stores one row per record × rule × field (drives quarantine and pass rates); `audit.data_quality_issues` stores one row per distinct problem (the analyst workflow OPEN → UNDER_REVIEW → RESOLVED / DISMISSED, enforced by a trigger). One record can fail several rules; one issue can cover several records.
@@ -240,7 +261,7 @@ React + TypeScript dashboard that **computes nothing itself**: every figure come
 - **SQL Library:** view, copy and run allowlisted queries, and see the definitions of the views they use.
 - **Securities, Corporate Actions, Ingestion & Lineage:** price and volume charts, ex-date behaviour, batch history, and record-level lineage from a published price back to the raw provider value.
 
-Accessibility choices: status shown with colour **and** icon **and** text, a colour-vision-checked chart palette, one y-axis per chart, table views alongside charts. Details: [docs/dashboard.md](docs/dashboard.md). Screenshots will be added.
+Accessibility choices: status shown with colour **and** icon **and** text, a colour-vision-checked chart palette, one y-axis per chart, table views alongside charts. Details: [docs/dashboard.md](docs/dashboard.md); screenshots [below](#screenshots).
 
 ---
 
@@ -250,12 +271,13 @@ Accessibility choices: status shown with colour **and** icon **and** text, a col
 |---|---|---|
 | Schema constraints | `scripts/run_schema_tests.sh` | 56 / 56 passed |
 | Ingestion reconciliation (real data, read-only) | `scripts/run_ingestion_checks.sh` | 5,020 / 5,020 records; 0 duplicates, 0 unparseable values, 0 off-calendar dates |
-| Data quality framework (synthetic fixtures) | `scripts/run_quality_tests.sh` | 77 / 77 passed |
+| Data quality framework (synthetic fixtures) | `scripts/run_quality_tests.sh` | 79 / 79 passed |
 | Financial analytics edge cases (synthetic) | `scripts/run_analytics_tests.sh` | 27 / 27 passed |
 | Independent analytics cross-check (real data) | `.venv/bin/python scripts/crosscheck_analytics.py` | 8 / 8 metrics within tolerance |
 | SQL Query Library (read-only execution) | `scripts/run_query_library.sh` | 16 / 16 executed |
 | API (security, validation, endpoints, errors) | `scripts/run_api_tests.sh` | 67 / 67 passed |
 | Dashboard | manual browser verification + TypeScript build | all 6 pages verified; no automated UI tests yet |
+| Clean-clone reproduction | README steps on a fresh clone with new roles/databases | all suites above passed in the clone |
 
 Synthetic tests run in a **separate database** (`equityiq_test`) built from the same DDL; the fixture loader refuses to run against any database whose name does not contain `test`.
 
@@ -277,7 +299,8 @@ equity-iq/
 │   └── main.py, database.py, query_library.py
 ├── frontend/                 # React + TypeScript dashboard (Vite)
 ├── scripts/                  # db_init, test runners, analytics cross-check
-├── docs/                     # architecture, data dictionary, ER diagram, methodology, API, dashboard
+├── docs/                     # architecture, data dictionary, ER diagram, methodology, API, dashboard, case study
+│   └── screenshots/          # dashboard screenshots (scripts/capture_screenshots.sh)
 ├── data/                     # raw/ (git-ignored), quality-tests/ (synthetic test results)
 ├── docker-compose.yml        # optional PostgreSQL via Docker
 ├── requirements.txt          # pinned Python dependencies
@@ -328,11 +351,23 @@ The snapshot window is fixed in `backend/ingestion/config.py`. Data downloaded o
 - [x] Phase 4: SQL financial analytics with edge-case tests and an independent cross-check
 - [x] Phase 5: Read-only API with a least-privilege role and an allowlisted SQL library
 - [x] Phase 6: Dashboard (Overview, Data Quality, SQL Library, Securities, Corporate Actions, Ingestion & Lineage)
-- [ ] Phase 7: Final documentation, screenshots, project case study, clean-environment reproduction, end-to-end verification
+- [x] Phase 7: Final documentation, screenshots, project case study, clean-clone reproduction, end-to-end verification
 - [ ] Continuous integration (SQL and API test suites on every push)
 - [ ] Automated frontend tests
 - [ ] Hosted demo
 - [ ] Possible extensions: second data source for cross-validation, versioned adjusted-price history, issue workflow actions in the UI, dark mode
+
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [Project case study](docs/project_case_study.md) | Problem, approach, decisions, validation, results, lessons learned |
+| [Database architecture](docs/database_architecture.md) | Layers, design decisions, constraint inventory, SQL file map |
+| [ER diagram](docs/er_diagram.md) · [Data dictionary](docs/data_dictionary.md) | Tables, keys, cardinalities, columns, views, roles |
+| [Data acquisition](docs/data_acquisition.md) | Source, settings, verified provider behaviour, reproducibility check |
+| [Data quality framework](docs/data_quality_framework.md) | Rule catalogue with test coverage, metrics, results |
+| [Financial methodology](docs/financial_methodology.md) | Formulas, price basis, assumptions, verification |
+| [API](docs/api.md) · [Dashboard](docs/dashboard.md) | Security model, endpoints, design decisions, verification |
 
 ## Limitations
 

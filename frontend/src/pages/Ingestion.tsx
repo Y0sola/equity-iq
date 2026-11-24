@@ -55,10 +55,10 @@ function FlowDiagram({ flow }: { flow: Flow }) {
     "Dashboard": ["read-only role", "allowlisted queries"],
   };
   return (
-    <ol className="flex flex-wrap items-stretch gap-2 px-4 py-4" aria-label="Data flow stages">
+    <ol className="flex flex-wrap items-stretch gap-1.5 px-4 py-4" aria-label="Data flow stages">
       {flow.stages.map((s, i) => (
         <li key={s.stage} className="flex items-stretch gap-2">
-          <div className="w-44 rounded-md border border-line bg-[#f8fafc] px-3 py-2.5">
+          <div className="w-[9.25rem] rounded-md border border-line bg-[#f8fafc] px-2.5 py-2.5">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-accent">Step {i + 1}</p>
             <p className="text-sm font-semibold">{s.stage}</p>
             <p className="mt-0.5 text-[11px] leading-snug text-muted">{s.detail}</p>

@@ -100,3 +100,31 @@ Tested on every value: **20,080 of 20,080** open/high/low/close values (100%) eq
 - **Yahoo terms.** Raw downloads are kept locally and git-ignored; the repository ships the download scripts instead.
 - **Calendar.** NYSE (XNYS) is applied to Nasdaq-listed securities; both follow the same US equity holiday schedule in this window.
 - **Exchange codes** are Yahoo's (`NMS` = Nasdaq Global Select, `NYQ` = NYSE), not ISO MIC codes.
+
+## Reproducibility check (Phase 7)
+
+The public repository was cloned into an empty directory and the README's setup steps were followed literally with new role and database names (`repro_owner`, `repro_reader`, `equityiq_repro`, `equityiq_repro_test`), a new virtual environment and a **fresh download** (retrieved 2026-11-24 16:07 UTC, 2 h 45 min after the original snapshot).
+
+| Step | Result | Time |
+|---|---|---|
+| `db_init.sh` (main + test) | roles, databases and all SQL objects created | ~3 s |
+| `pip install -r requirements.txt` | pinned versions installed | 22 s (package cache available) |
+| `fetch_snapshot` | 20/20 tickers, 5,020 rows | 78 s |
+| `load_snapshot` + `validate` | 5,020 prices, 72 dividends, 20 companies promoted; 0 confirmed defects; 79 anomaly issues | ~2 s |
+| `npm ci` + `npm run build` | clean install from lockfile, production build | 8 s |
+| All test suites (schema, quality, analytics, API, cross-check, library, reconciliation) | all passed after the fixes below | ~15 s |
+
+**Same data twice?** Comparing the two downloads field by field (40,160 fields):
+
+| Field group | Result |
+|---|---|
+| Trading calendar | identical (same checksum) |
+| Open, high, low, close, volume, dividends, splits (35,140 fields) | identical |
+| Adjusted close | **904 values differ**, all by 1–2 float32 steps (max relative difference 2.4 × 10⁻⁷), only for dividend-paying tickers; AMZN and TSLA unchanged |
+| Company reference | differs (Yahoo's profile payload includes live fields such as current price) |
+
+Interpretation: the provider recomputes the adjusted series on each request in 32-bit floating point; reported prices are stable. This finding changed the quality framework: rule DQ-CNS-006 now compares adjusted close with a relative tolerance of 1 × 10⁻⁶ instead of exact 6-decimal equality, which had held all 904 noise differences as "revisions" (see [data_quality_framework.md](data_quality_framework.md)).
+
+Two problems found by the reproduction and fixed:
+1. DQ-CNS-006 false revisions (above): 904 → 0 after the fix, with a genuine 1 % revision still flagged (new synthetic tests).
+2. An API test hard-coded the role name `equityiq_reader` and failed for any other configured name; it now compares with the names in `.env`. (Also: `load_snapshot` printed a hard-coded database name; it now prints the database it is actually connected to.)
